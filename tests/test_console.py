@@ -1,21 +1,26 @@
-from car import Car  # Assuming your class is in a file named "car.py"
+#!/usr/bin/python3
+"""Test for the console"""
 
-def test_car_class():
-    my_car = Car("Toyota", "Camry", 2023)
+import unittest
+import console
+from console import HBNBCommand
 
-    # Test get_info() method
-    assert my_car.get_info() == "2023 Toyota Camry"
 
-    # Test start_engine() method
-    # You may want to use mocking or capturing stdout for this test
-    # For simplicity, I'll just call the method
-    my_car.start_engine()
+class test_console(unittest.TestCase):
+    """class test console"""
 
-    # Test stop_engine() method
-    # You may want to use mocking or capturing stdout for this test
-    # For simplicity, I'll just call the method
-    my_car.stop_engine()
+    def create(self):
+        """create the intance"""
+        return HBNBCommand()
 
-if __name__ == "__main__":
-    test_car_class()
-    print("All tests passed!")
+    def test_quit(self):
+        """ test for the method quit
+        """
+        con = self.create()
+        self.assertTrue(con.onecmd("quit"))
+
+    def test_EOF(self):
+        """test for the method EQF
+        """
+        con = self.create()
+        self.assertTrue(con.onecmd("EOF"))
