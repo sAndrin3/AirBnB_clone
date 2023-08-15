@@ -1,49 +1,52 @@
 #!/usr/bin/python3
-"""Module for test Review class"""
-import unittest
-import json
-import pep8
-import datetime
+"""Unittest module for the Review Class."""
 
+import unittest
+from datetime import datetime
+import time
 from models.review import Review
+import re
+import json
+from models.engine.file_storage import FileStorage
+import os
+from models import storage
 from models.base_model import BaseModel
 
 
 class TestReview(unittest.TestCase):
-    """Test Review class implementation"""
-    def test_doc_module(self):
-        """Module documentation"""
-        doc = Review.__doc__
-        self.assertGreater(len(doc), 1)
 
-    def test_pep8_conformance_review(self):
-        """Test that models/review.py conforms to PEP8."""
-        pep8style = pep8.StyleGuide(quiet=True)
-        result = pep8style.check_files(['models/review.py'])
-        self.assertEqual(result.total_errors, 0,
-                         "Found code style errors (and warnings).")
+    """Test Cases for the Review class."""
 
-    def test_pep8_conformance_test_review(self):
-        """Test that tests/test_models/test_review.py conforms to PEP8."""
-        pep8style = pep8.StyleGuide(quiet=True)
-        res = pep8style.check_files(['tests/test_models/test_review.py'])
-        self.assertEqual(res.total_errors, 0,
-                         "Found code style errors (and warnings).")
+    def setUp(self):
+        """Sets up test methods."""
+        pass
 
-    def test_doc_constructor(self):
-        """Constructor documentation"""
-        doc = Review.__init__.__doc__
-        self.assertGreater(len(doc), 1)
+    def tearDown(self):
+        """Tears down test methods."""
+        self.resetStorage()
+        pass
 
-    def test_class(self):
-        """Validate the types of the attributes an class"""
-        with self.subTest(msg='Inheritance'):
-            self.assertTrue(issubclass(Review, BaseModel))
+    def resetStorage(self):
+        """Resets FileStorage data."""
+        FileStorage._FileStorage__objects = {}
+        if os.path.isfile(FileStorage._FileStorage__file_path):
+            os.remove(FileStorage._FileStorage__file_path)
 
-        with self.subTest(msg='Attributes'):
-            self.assertIsInstance(Review.place_id, str)
-            self.assertIsInstance(Review.user_id, str)
-            self.assertIsInstance(Review.text, str)
+    def test_8_instantiation(self):
+        """Tests instantiation of Review class."""
 
-if __name__ == '__main__':
+        b = Review()
+        self.assertEqual(str(type(b)), "<class 'models.review.Review'>")
+        self.assertIsInstance(b, Review)
+        self.assertTrue(issubclass(type(b), BaseModel))
+
+    def test_8_attributes(self):
+        """Tests the attributes of Review class."""
+        attributes = storage.attributes()["Review"]
+        o = Review()
+        for k, v in attributes.items():
+            self.assertTrue(hasattr(o, k))
+            self.assertEqual(type(getattr(o, k, None)), v)
+
+if __name__ == "__main__":
     unittest.main()

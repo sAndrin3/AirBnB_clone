@@ -1,49 +1,52 @@
 #!/usr/bin/python3
-"""Module for test City class"""
-import unittest
-import json
-import pep8
-import datetime
+"""Unittest module for the City Class."""
 
+import unittest
+from datetime import datetime
+import time
 from models.city import City
+import re
+import json
+from models.engine.file_storage import FileStorage
+import os
+from models import storage
 from models.base_model import BaseModel
 
 
 class TestCity(unittest.TestCase):
-    """Test City class implementation"""
-    def test_doc_module(self):
-        """Module documentation"""
-        doc = City.__doc__
-        self.assertGreater(len(doc), 1)
 
-    def test_pep8_conformance_city(self):
-        """Test that models/city.py conforms to PEP8."""
-        pep8style = pep8.StyleGuide(quiet=True)
-        result = pep8style.check_files(['models/city.py'])
-        self.assertEqual(result.total_errors, 0,
-                         "Found code style errors (and warnings).")
+    """Test Cases for the City class."""
 
-    def test_pep8_conformance_test_city(self):
-        """Test that tests/test_models/test_city.py conforms to PEP8."""
-        pep8style = pep8.StyleGuide(quiet=True)
-        res = pep8style.check_files(['tests/test_models/test_city.py'])
-        self.assertEqual(res.total_errors, 0,
-                         "Found code style errors (and warnings).")
+    def setUp(self):
+        """Sets up test methods."""
+        pass
 
-    def test_doc_constructor(self):
-        """Constructor documentation"""
-        doc = City.__init__.__doc__
-        self.assertGreater(len(doc), 1)
+    def tearDown(self):
+        """Tears down test methods."""
+        self.resetStorage()
+        pass
 
-    def test_class(self):
-        """Validate the types of the attributes an class"""
-        with self.subTest(msg='Inheritance'):
-            self.assertTrue(issubclass(City, BaseModel))
+    def resetStorage(self):
+        """Resets FileStorage data."""
+        FileStorage._FileStorage__objects = {}
+        if os.path.isfile(FileStorage._FileStorage__file_path):
+            os.remove(FileStorage._FileStorage__file_path)
 
-        with self.subTest(msg='Attributes'):
-            self.assertIsInstance(City.name, str)
-            self.assertIsInstance(City.state_id, str)
+    def test_8_instantiation(self):
+        """Tests instantiation of City class."""
 
+        b = City()
+        self.assertEqual(str(type(b)), "<class 'models.city.City'>")
+        self.assertIsInstance(b, City)
+        self.assertTrue(issubclass(type(b), BaseModel))
 
-if __name__ == '__main__':
+    def test_8_attributes(self):
+        """Tests the attributes of City class."""
+        attributes = storage.attributes()["City"]
+        o = City()
+        for k, v in attributes.items():
+            self.assertTrue(hasattr(o, k))
+            self.assertEqual(type(getattr(o, k, None)), v)
+
+if __name__ == "__main__":
     unittest.main()
